@@ -43,11 +43,12 @@ async function run() {
       const result = await Booking.insertOne(req.body);
       res.send(result);
     });
+
     app.get("/booking", async (req, res) => {
-      let query = {};
-      const cursor = Booking.find(query);
-      const products = await cursor.toArray();
-      res.send(products);
+      const email = req.query.email;
+      const query = { email: email };
+      const bookings = await Booking.find(query).toArray();
+      res.send(bookings);
     });
 
     //Add users
@@ -72,6 +73,16 @@ async function run() {
       const query = { email };
       const user = await usersCollection.findOne(query);
       res.send({ role: user?.role });
+    });
+
+    app.post("/products", async (req, res) => {
+      const product = req.body;
+      console.log(product)
+      product.sellStatus = "available";
+      product.isAdvertised = false;
+      const result = await productCollection.insertOne(product);
+      console.log(result)
+      res.send(result);
     });
   } finally {
   }
